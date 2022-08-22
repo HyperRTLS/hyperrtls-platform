@@ -1,0 +1,6 @@
+[submodule "hyperrtls-backend"]
+	path = hyperrtls-backend
+	url = git@github.com:HyperRTLS/hyperrtls-backend.git
+[submodule "hyperrtls-dashboard"]
+	path = hyperrtls-dashboard
+	url = git@github.com:HyperRTLS/hyperrtls-dashboard.git
