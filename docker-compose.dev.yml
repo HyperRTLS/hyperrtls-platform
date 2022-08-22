@@ -2,7 +2,7 @@ version: "3.9"
 services:
   mosquitto:
     container_name: mosquitto
-    image: eclipse-mosquitto
+    image: eclipse-mosquitto@sha256:bbc6c63b6b46eababcc45a026c94c6ae293d3b45ff42b7e28b8bddfc415d06ee
     ports:
       - 1883:1883
       - 8883:8883
@@ -12,7 +12,7 @@ services:
       - ./mosquitto/log:/mosquitto/log
   postgres:
     container_name: postgres
-    image: postgres
+    image: postgres@sha256:f8816ada742348e1adfcec5c2a180b675bf6e4a294e0feb68bd70179451e1242
     ports:
       - 5432:5432
     environment:
