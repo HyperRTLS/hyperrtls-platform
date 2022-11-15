@@ -1,0 +1,66 @@
+version: "3.9"
+services:
+  mosquitto:
+    container_name: mosquitto
+    image: eclipse-mosquitto@sha256:bbc6c63b6b46eababcc45a026c94c6ae293d3b45ff42b7e28b8bddfc415d06ee
+    volumes:
+      - ./mosquitto/config:/mosquitto/config
+      - ./mosquitto/data:/mosquitto/data
+      - ./mosquitto/log:/mosquitto/log
+  postgres:
+    container_name: postgres
+    image: postgres@sha256:f8816ada742348e1adfcec5c2a180b675bf6e4a294e0feb68bd70179451e1242
+    environment:
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+      - POSTGRES_DB
+  backend:
+    container_name: backend
+    image: ghcr.io/hyperrtls/hyperrtls-backend:latest
+    depends_on:
+      - mosquitto
+      - postgres
+    labels:
+      - "traefik.enable=true"
+      # Middlewares
+      - "traefik.http.middlewares.backend-stripprefix.stripprefix.prefixes=/api"
+      - "traefik.http.middlewares.backend-stripprefix.stripprefix.forceSlash=false"
+      # Main router
+      - "traefik.http.routers.main.rule=Host(`localhost`) && PathPrefix(`/api`)"
+      - "traefik.http.routers.main.entrypoints=websecure"
+      - "traefik.http.routers.main.middlewares=backend-stripprefix@docker"
+      - "traefik.http.routers.main.tls=true"
+      - "traefik.http.routers.main.service=backend"
+      # Backend-specific router
+      - "traefik.http.routers.backend.rule=Host(`backend.localhost`)"
+      - "traefik.http.routers.backend.entrypoints=websecure"
+      - "traefik.http.routers.backend.tls=true"
+      - "traefik.http.routers.backend.service=backend"
+      # Services
+      - "traefik.http.services.backend.loadbalancer.server.port=3000"
+      - "traefik.http.services.backend.loadbalancer.server.scheme=http"
+    environment:
+      - DYNSEC_BROKER_URL
+      - DYNSEC_BROKER_USERNAME
+      - DYNSEC_BROKER_PASSWORD
+      - MQTT_BROKER_URL
+      - MQTT_BROKER_USERNAME
+      - MQTT_BROKER_PASSWORD
+      - DATABASE_URL
+  traefik:
+    container_name: traefik
+    image: traefik:v2.9
+    command: 
+      # - "--api.insecure=true"
+      - "--providers.docker"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
+      - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
+    ports:
+      - 80:80
+      - 443:443
+      # - 8080:8080
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
