@@ -7,6 +7,9 @@ services:
       - ./mosquitto/config:/mosquitto/config
       - ./mosquitto/data:/mosquitto/data
       - ./mosquitto/log:/mosquitto/log
+    ports:
+      - 1883:1883
+      - 8883:8883
   postgres:
     container_name: postgres
     image: postgres@sha256:3458bdc7f5c7fdc3b54547c9cfd531e0097d1d434699a781f2c2aa1247906b74
@@ -14,6 +17,8 @@ services:
       - POSTGRES_USER
       - POSTGRES_PASSWORD
       - POSTGRES_DB
+    ports:
+      - 5432:5432
   backend:
     container_name: backend
     image: ghcr.io/hyperrtls/hyperrtls-backend:latest
@@ -51,7 +56,7 @@ services:
     container_name: traefik
     image: traefik:v2.9@sha256:2e53e47b59bc9a799b6c7b0d6d65f529de478094781751f1e061516ce9ca7c68
     command: 
-      # - "--api.insecure=true"
+      - "--api.insecure=true"
       - "--providers.docker"
       - "--providers.docker.exposedbydefault=false"
       - "--entrypoints.web.address=:80"
@@ -61,6 +66,6 @@ services:
     ports:
       - 80:80
       - 443:443
-      # - 8080:8080
+      - 8080:8080
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
