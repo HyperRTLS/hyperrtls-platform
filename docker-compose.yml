@@ -9,7 +9,7 @@ services:
       - ./mosquitto/log:/mosquitto/log
   postgres:
     container_name: postgres
-    image: postgres@sha256:f8816ada742348e1adfcec5c2a180b675bf6e4a294e0feb68bd70179451e1242
+    image: postgres@sha256:3458bdc7f5c7fdc3b54547c9cfd531e0097d1d434699a781f2c2aa1247906b74
     environment:
       - POSTGRES_USER
       - POSTGRES_PASSWORD
