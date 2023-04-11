@@ -21,7 +21,7 @@ services:
       - 5432:5432
   backend:
     container_name: backend
-    image: ghcr.io/hyperrtls/hyperrtls-backend:latest
+    image: ghcr.io/hyperrtls/hyperrtls-backend:latest@sha256:785449a69a704efcae564f50b17e9a5800b44f2664eab6b5f2d4739df346e473
     depends_on:
       - mosquitto
       - postgres
@@ -50,7 +50,7 @@ services:
       - DATABASE_URL
   dashboard:
     container_name: dashboard
-    image: ghcr.io/hyperrtls/hyperrtls-dashboard:latest
+    image: ghcr.io/hyperrtls/hyperrtls-dashboard:latest@sha256:9bf2f7b38e9db5af48246b5353e3186c5be495bb3cc78b9dccea69d5a5156de8
     depends_on:
       - backend
     labels:
