@@ -25,22 +25,18 @@ services:
     depends_on:
       - mosquitto
       - postgres
+      - traefik
     labels:
       - "traefik.enable=true"
       # Middlewares
       - "traefik.http.middlewares.backend-stripprefix.stripprefix.prefixes=/api"
       - "traefik.http.middlewares.backend-stripprefix.stripprefix.forceSlash=false"
-      # Main router
-      - "traefik.http.routers.main.rule=Host(`localhost`) && PathPrefix(`/api`)"
-      - "traefik.http.routers.main.entrypoints=websecure"
-      - "traefik.http.routers.main.middlewares=backend-stripprefix@docker"
-      - "traefik.http.routers.main.tls=true"
-      - "traefik.http.routers.main.service=backend"
       # Backend-specific router
-      - "traefik.http.routers.backend.rule=Host(`backend.localhost`)"
-      - "traefik.http.routers.backend.entrypoints=websecure"
-      - "traefik.http.routers.backend.tls=true"
+      - "traefik.http.routers.backend.rule=((Host(`localhost`) && PathPrefix(`/api`)) || Host(`backend.localhost`))"
+      - "traefik.http.routers.backend.entrypoints=web,websecure"
+      # - "traefik.http.routers.backend.tls=true"
       - "traefik.http.routers.backend.service=backend"
+      - "traefik.http.routers.backend.middlewares=backend-stripprefix@docker"
       # Services
       - "traefik.http.services.backend.loadbalancer.server.port=3000"
       - "traefik.http.services.backend.loadbalancer.server.scheme=http"
@@ -54,26 +50,22 @@ services:
       - DATABASE_URL
   dashboard:
     container_name: dashboard
-    image: hyperrtls-dashboard
+    image: ghcr.io/hyperrtls/hyperrtls-dashboard:latest
     depends_on:
       - backend
     labels:
       - "traefik.enable=true"
-      # Main router
-      - "traefik.http.routers.main.rule=Host(`localhost`)"
-      - "traefik.http.routers.main.entrypoints=websecure"
-      - "traefik.http.routers.main.tls=true"
-      - "traefik.http.routers.main.service=dashboard"
       # Dashboard-specific router
-      - "traefik.http.routers.dashboard.rule=Host(`dashboard.localhost`)"
-      - "traefik.http.routers.dashboard.entrypoints=websecure"
-      - "traefik.http.routers.dashboard.tls=true"
+      - "traefik.http.routers.dashboard.rule=(Host(`localhost`) || Host(`dashboard.localhost`))"
+      - "traefik.http.routers.dashboard.entrypoints=web,websecure"
+      # - "traefik.http.routers.dashboard.tls=true"
       - "traefik.http.routers.dashboard.service=dashboard"
       # Services
       - "traefik.http.services.dashboard.loadbalancer.server.port=3000"
       - "traefik.http.services.dashboard.loadbalancer.server.scheme=http"
     environment:
-      - API_BASE_URL
+      - SERVER_API_URL
+      - CLIENT_API_URL
   traefik:
     container_name: traefik
     image: traefik:v2.9@sha256:2e53e47b59bc9a799b6c7b0d6d65f529de478094781751f1e061516ce9ca7c68
@@ -83,11 +75,11 @@ services:
       - "--providers.docker.exposedbydefault=false"
       - "--entrypoints.web.address=:80"
       - "--entrypoints.websecure.address=:443"
-      - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
-      - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
+      # - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
+      # - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
     ports:
-      - 80:80
-      - 443:443
+      - 8081:80
+      # - 8082:443
       - 8080:8080
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
