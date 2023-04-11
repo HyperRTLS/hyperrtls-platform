@@ -7,9 +7,9 @@ services:
       - 1883:1883
       - 8883:8883
     volumes:
-      - ./mosquitto/config:/mosquitto/config
-      - ./mosquitto/data:/mosquitto/data
-      - ./mosquitto/log:/mosquitto/log
+      - ./mosquitto_dev/config:/mosquitto/config
+      - ./mosquitto_dev/data:/mosquitto/data
+      - ./mosquitto_dev/log:/mosquitto/log
   postgres:
     container_name: postgres
     image: postgres@sha256:3458bdc7f5c7fdc3b54547c9cfd531e0097d1d434699a781f2c2aa1247906b74

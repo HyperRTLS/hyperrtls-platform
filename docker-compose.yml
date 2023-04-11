@@ -52,6 +52,28 @@ services:
       - MQTT_BROKER_USERNAME
       - MQTT_BROKER_PASSWORD
       - DATABASE_URL
+  dashboard:
+    container_name: dashboard
+    image: hyperrtls-dashboard
+    depends_on:
+      - backend
+    labels:
+      - "traefik.enable=true"
+      # Main router
+      - "traefik.http.routers.main.rule=Host(`localhost`)"
+      - "traefik.http.routers.main.entrypoints=websecure"
+      - "traefik.http.routers.main.tls=true"
+      - "traefik.http.routers.main.service=dashboard"
+      # Dashboard-specific router
+      - "traefik.http.routers.dashboard.rule=Host(`dashboard.localhost`)"
+      - "traefik.http.routers.dashboard.entrypoints=websecure"
+      - "traefik.http.routers.dashboard.tls=true"
+      - "traefik.http.routers.dashboard.service=dashboard"
+      # Services
+      - "traefik.http.services.dashboard.loadbalancer.server.port=3000"
+      - "traefik.http.services.dashboard.loadbalancer.server.scheme=http"
+    environment:
+      - API_BASE_URL
   traefik:
     container_name: traefik
     image: traefik:v2.9@sha256:2e53e47b59bc9a799b6c7b0d6d65f529de478094781751f1e061516ce9ca7c68
