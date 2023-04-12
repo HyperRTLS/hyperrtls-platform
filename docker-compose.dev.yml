@@ -12,7 +12,7 @@ services:
       - ./mosquitto_dev/log:/mosquitto/log
   postgres:
     container_name: postgres
-    image: postgres@sha256:3458bdc7f5c7fdc3b54547c9cfd531e0097d1d434699a781f2c2aa1247906b74
+    image: postgres@sha256:5a90725b3751c2c7ac311c9384dfc1a8f6e41823e341fb1dceed96a11677303a
     ports:
       - 5432:5432
     environment:
