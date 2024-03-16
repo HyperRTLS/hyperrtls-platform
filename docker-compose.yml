@@ -68,7 +68,7 @@ services:
       - CLIENT_API_URL
   traefik:
     container_name: traefik
-    image: traefik:v3.0@sha256:0d7e8693e44e52588366695db63512b6b7a92d34b2145c2c3c732fec27ee03e0
+    image: traefik:v3.0@sha256:f4129f411fc99a025f901688ace7186e0933ba0271ae8d47aa060de134a36c80
     command: 
       - "--api.insecure=true"
       - "--providers.docker"
