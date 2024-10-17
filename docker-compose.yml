@@ -2,7 +2,7 @@ version: "3.9"
 services:
   mosquitto:
     container_name: mosquitto
-    image: eclipse-mosquitto@sha256:0e0886befecf2bf77e2e613f926f6ee0b77b93f76e49847471177143a8b3863c
+    image: eclipse-mosquitto@sha256:090d745b6435d10a31acb82eee999ec36a2d7f416cc4f578c0a298c42af2ea14
     volumes:
       - ./mosquitto/config:/mosquitto/config
       - ./mosquitto/data:/mosquitto/data
