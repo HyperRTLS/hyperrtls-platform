@@ -12,7 +12,7 @@ services:
       - 8883:8883
   postgres:
     container_name: postgres
-    image: postgres@sha256:5a90725b3751c2c7ac311c9384dfc1a8f6e41823e341fb1dceed96a11677303a
+    image: postgres@sha256:8d3be35b184e70d81e54cbcbd3df3c0b47f37d06482c0dd1c140db5dbcc6a808
     environment:
       - POSTGRES_USER
       - POSTGRES_PASSWORD
